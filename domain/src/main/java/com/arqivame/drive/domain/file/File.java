@@ -1,10 +1,10 @@
 package com.arqivame.drive.domain.file;
 
+import static java.util.Objects.isNull;
 import static java.util.Objects.requireNonNull;
 
 import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
@@ -26,7 +26,7 @@ public class File extends AggregateRoot<FileID> implements EventSource {
     private final MemberID creator;
     private final MemberID owner;
 
-    private FolderID parentFolder;
+    private FolderID folder;
     private final Set<FileSharing> sharings;
 
     private final Queue<Event<?>> events;
@@ -37,7 +37,7 @@ public class File extends AggregateRoot<FileID> implements EventSource {
             final Content content,
             final MemberID creator,
             final MemberID owner,
-            final FolderID parentFolder,
+            final FolderID folder,
             final Set<FileSharing> sharings,
             final Queue<Event<?>> events) {
         super(id);
@@ -45,19 +45,34 @@ public class File extends AggregateRoot<FileID> implements EventSource {
         this.content = requireNonNull(content);
         this.creator = requireNonNull(creator);
         this.owner = requireNonNull(owner);
-        this.parentFolder = requireNonNull(parentFolder);
+        this.folder = requireNonNull(folder);
+        this.sharings = isNull(sharings) ? new HashSet<>() : new HashSet<>(sharings);
 
-        this.sharings = Objects.isNull(sharings) ? new HashSet<>() : new HashSet<>(sharings);
-
-        this.events = Objects.isNull(events) ? new LinkedList<>() : new LinkedList<>(events);
+        this.events = isNull(events) ? new LinkedList<>() : new LinkedList<>(events);
 
         selfValidate();
-
     }
 
     @Override
     public void validate(final ValidationHandler handler) {
 
+    }
+
+    public static File create(
+            FileName name,
+            Content content,
+            MemberID creator,
+            MemberID owner,
+            FolderID folder) {
+        return new File(
+                FileID.unique(),
+                name,
+                content,
+                creator,
+                owner,
+                folder,
+                null,
+                null);
     }
 
     @Override
@@ -88,8 +103,8 @@ public class File extends AggregateRoot<FileID> implements EventSource {
         return owner;
     }
 
-    public FolderID getParentFolder() {
-        return parentFolder;
+    public FolderID getFolder() {
+        return folder;
     }
 
     public Set<FileSharing> getSharings() {
