@@ -7,7 +7,7 @@ import com.arqivame.drive.domain.file.File;
 import com.arqivame.drive.domain.file.FileID;
 import com.arqivame.drive.domain.file.FileName;
 import com.arqivame.drive.domain.folder.FolderID;
-import com.arqivame.drive.domain.member.MemberID;
+import com.arqivame.drive.domain.user.UserID;
 
 public interface FileQueryGateway {
 
@@ -17,6 +17,6 @@ public interface FileQueryGateway {
 
     List<File> listFilesInFolder(FolderID folderId);
 
-    Long totalBytesUsedBy(MemberID owner);
+    Long totalBytesUsedBy(UserID owner);
 
 }

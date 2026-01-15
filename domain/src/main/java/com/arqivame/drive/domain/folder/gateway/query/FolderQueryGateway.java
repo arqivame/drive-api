@@ -4,10 +4,10 @@ import java.util.Optional;
 
 import com.arqivame.drive.domain.folder.Folder;
 import com.arqivame.drive.domain.folder.FolderID;
-import com.arqivame.drive.domain.member.MemberID;
+import com.arqivame.drive.domain.user.UserID;
 
 public interface FolderQueryGateway {
 
-    Optional<Folder> findVisibleById(FolderID id, MemberID actor);
+    Optional<Folder> findVisibleById(FolderID id, UserID actor);
 
 }

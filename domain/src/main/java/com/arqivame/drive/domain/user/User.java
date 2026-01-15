@@ -1,4 +1,4 @@
-package com.arqivame.drive.domain.member;
+package com.arqivame.drive.domain.user;
 
 import java.util.Optional;
 
@@ -7,11 +7,11 @@ import com.arqivame.drive.domain.event.Event;
 import com.arqivame.drive.domain.event.EventSource;
 import com.arqivame.drive.domain.validation.ValidationHandler;
 
-public class Member extends AggregateRoot<MemberID> implements EventSource {
+public class User extends AggregateRoot<UserID> implements EventSource {
 
     private Quota quota;
 
-    private Member(MemberID id) {
+    private User(UserID id) {
         super(id);
     }
 

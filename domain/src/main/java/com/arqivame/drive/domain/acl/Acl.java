@@ -12,7 +12,7 @@ import java.util.stream.Stream;
 import com.arqivame.drive.domain.AggregateRoot;
 import com.arqivame.drive.domain.event.Event;
 import com.arqivame.drive.domain.event.EventSource;
-import com.arqivame.drive.domain.member.MemberID;
+import com.arqivame.drive.domain.user.UserID;
 import com.arqivame.drive.domain.validation.ValidationHandler;
 
 public class Acl extends AggregateRoot<AclID> implements EventSource {
@@ -62,13 +62,13 @@ public class Acl extends AggregateRoot<AclID> implements EventSource {
         return newAcl;
     }
 
-    public Optional<AccessPermission> resolveAccessPermissionFor(final MemberID member) {
+    public Optional<AccessPermission> resolveAccessPermissionFor(final UserID user) {
 
-        if (this.resource.getOwner().equals(member))
+        if (this.resource.getOwner().equals(user))
             return Optional.of(AccessPermission.MANAGE);
 
         return Stream.concat(directEntries.stream(), inheritedEntries.stream())
-                .filter(entry -> entry.member().equals(member))
+                .filter(entry -> entry.user().equals(user))
                 .map(Entry::permission)
                 .filter(AccessPermission.class::isInstance)
                 .map(AccessPermission.class::cast)

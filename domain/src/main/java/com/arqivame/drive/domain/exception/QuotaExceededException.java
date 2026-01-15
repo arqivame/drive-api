@@ -2,7 +2,7 @@ package com.arqivame.drive.domain.exception;
 
 import java.util.List;
 
-import com.arqivame.drive.domain.member.Quota;
+import com.arqivame.drive.domain.user.Quota;
 
 public class QuotaExceededException extends SilentDomainException {
 

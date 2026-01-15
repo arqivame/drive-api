@@ -19,9 +19,9 @@ import com.arqivame.drive.domain.file.gateway.query.FileQueryGateway;
 import com.arqivame.drive.domain.folder.Folder;
 import com.arqivame.drive.domain.folder.FolderID;
 import com.arqivame.drive.domain.folder.gateway.query.FolderQueryGateway;
-import com.arqivame.drive.domain.member.Member;
-import com.arqivame.drive.domain.member.MemberGateway;
-import com.arqivame.drive.domain.member.MemberID;
+import com.arqivame.drive.domain.user.User;
+import com.arqivame.drive.domain.user.UserGateway;
+import com.arqivame.drive.domain.user.UserID;
 import com.arqivame.drive.domain.validation.ValidationError;
 import com.arqivame.drive.domain.validation.handler.Notification;
 
@@ -29,7 +29,7 @@ public class DefaultCreateFileUseCase extends CreateFileUseCase {
 
     private final EventDispatcher eventDispatcher;
 
-    private final MemberGateway memberGateway;
+    private final UserGateway userGateway;
     private final FolderQueryGateway folderQueryGateway;
     private final AclGateway aclGateway;
     private final FileQueryGateway fileQueryGateway;
@@ -37,13 +37,13 @@ public class DefaultCreateFileUseCase extends CreateFileUseCase {
 
     public DefaultCreateFileUseCase(
             final EventDispatcher eventDispatcher,
-            final MemberGateway memberGateway,
+            final UserGateway userGateway,
             final FolderQueryGateway folderQueryGateway,
             final AclGateway aclGateway,
             final FileQueryGateway fileQueryGateway,
             final FileCommandGateway fileCommandGateway) {
         this.eventDispatcher = requireNonNull(eventDispatcher);
-        this.memberGateway = requireNonNull(memberGateway);
+        this.userGateway = requireNonNull(userGateway);
         this.folderQueryGateway = requireNonNull(folderQueryGateway);
         this.aclGateway = requireNonNull(aclGateway);
         this.fileQueryGateway = requireNonNull(fileQueryGateway);
@@ -53,14 +53,14 @@ public class DefaultCreateFileUseCase extends CreateFileUseCase {
     @Override
     public CreateFileOutput execute(final CreateFileInput input) {
 
-        final MemberID creatorId = MemberID.of(input.creator());
+        final UserID creatorId = UserID.of(input.creator());
         final FolderID folderId = FolderID.of(input.folder());
         final FileName name = FileName.of(input.name());
         final Content content = Content.of(input.contentType(), input.size());
 
-        memberGateway
+        userGateway
                 .findById(creatorId)
-                .orElseThrow(() -> NotFoundException.create(Member.class, creatorId));
+                .orElseThrow(() -> NotFoundException.create(User.class, creatorId));
 
         final Folder folder = folderQueryGateway
                 .findVisibleById(folderId, creatorId)
@@ -77,9 +77,9 @@ public class DefaultCreateFileUseCase extends CreateFileUseCase {
         if (!folderPermission.isAtMost(AccessPermission.WRITE))
             throw NotAllowedException.with("You don't have permission to create files in this folder.");
 
-        final Member owner = memberGateway
+        final User owner = userGateway
                 .findById(folder.getOwner())
-                .orElseThrow(() -> NotFoundException.create(Member.class, folder.getOwner()));
+                .orElseThrow(() -> NotFoundException.create(User.class, folder.getOwner()));
 
         checkQuota(owner, input.size());
 
@@ -111,7 +111,7 @@ public class DefaultCreateFileUseCase extends CreateFileUseCase {
         return new CreateFileOutput(null);
     }
 
-    private void checkQuota(final Member owner, final Long newFileSize) {
+    private void checkQuota(final User owner, final Long newFileSize) {
 
         final Long usedQuota = fileQueryGateway.totalBytesUsedBy(owner.getId());
 

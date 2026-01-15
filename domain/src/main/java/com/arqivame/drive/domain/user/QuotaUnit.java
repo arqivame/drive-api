@@ -1,4 +1,4 @@
-package com.arqivame.drive.domain.member;
+package com.arqivame.drive.domain.user;
 
 public enum QuotaUnit {
     BYTE(1),

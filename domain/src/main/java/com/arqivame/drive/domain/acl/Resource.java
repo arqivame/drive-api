@@ -10,7 +10,7 @@ import com.arqivame.drive.domain.file.File;
 import com.arqivame.drive.domain.file.FileID;
 import com.arqivame.drive.domain.folder.Folder;
 import com.arqivame.drive.domain.folder.FolderID;
-import com.arqivame.drive.domain.member.MemberID;
+import com.arqivame.drive.domain.user.UserID;
 import com.arqivame.drive.domain.validation.ValidationError;
 import com.arqivame.drive.domain.validation.ValidationHandler;
 
@@ -18,12 +18,12 @@ public class Resource<I extends Identifier<?>> implements ValueObject {
 
     private final I id;
     private final Resource.Type type;
-    private final MemberID owner;
+    private final UserID owner;
 
     private Resource(
             final I id,
             final Type type,
-            final MemberID owner) {
+            final UserID owner) {
         this.id = id;
         this.type = type;
         this.owner = owner;
@@ -82,7 +82,7 @@ public class Resource<I extends Identifier<?>> implements ValueObject {
         return type;
     }
 
-    public MemberID getOwner() {
+    public UserID getOwner() {
         return owner;
     }
 

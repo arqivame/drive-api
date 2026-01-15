@@ -14,7 +14,7 @@ import com.arqivame.drive.domain.event.Event;
 import com.arqivame.drive.domain.event.EventSource;
 import com.arqivame.drive.domain.exception.InvalidStateException;
 import com.arqivame.drive.domain.folder.FolderID;
-import com.arqivame.drive.domain.member.MemberID;
+import com.arqivame.drive.domain.user.UserID;
 import com.arqivame.drive.domain.validation.ValidationHandler;
 import com.arqivame.drive.domain.validation.handler.Notification;
 
@@ -23,8 +23,8 @@ public class File extends AggregateRoot<FileID> implements EventSource {
     private FileName name;
     private Content content;
 
-    private final MemberID creator;
-    private final MemberID owner;
+    private final UserID creator;
+    private final UserID owner;
 
     private FolderID folder;
     private final Set<FileSharing> sharings;
@@ -35,8 +35,8 @@ public class File extends AggregateRoot<FileID> implements EventSource {
             final FileID id,
             final FileName name,
             final Content content,
-            final MemberID creator,
-            final MemberID owner,
+            final UserID creator,
+            final UserID owner,
             final FolderID folder,
             final Set<FileSharing> sharings,
             final Queue<Event<?>> events) {
@@ -61,8 +61,8 @@ public class File extends AggregateRoot<FileID> implements EventSource {
     public static File create(
             FileName name,
             Content content,
-            MemberID creator,
-            MemberID owner,
+            UserID creator,
+            UserID owner,
             FolderID folder) {
         return new File(
                 FileID.unique(),
@@ -95,11 +95,11 @@ public class File extends AggregateRoot<FileID> implements EventSource {
         return content;
     }
 
-    public MemberID getCreator() {
+    public UserID getCreator() {
         return creator;
     }
 
-    public MemberID getOwner() {
+    public UserID getOwner() {
         return owner;
     }
 

@@ -4,20 +4,20 @@ import java.time.Instant;
 
 import com.arqivame.drive.domain.Entity;
 import com.arqivame.drive.domain.folder.FolderID;
-import com.arqivame.drive.domain.member.MemberID;
+import com.arqivame.drive.domain.user.UserID;
 import com.arqivame.drive.domain.validation.ValidationHandler;
 
 public class FileSharing extends Entity<FileSharingID> {
 
-    private final MemberID sharedTo;
-    private final MemberID sharedBy;
+    private final UserID sharedTo;
+    private final UserID sharedBy;
     private final FolderID virtualFolder;
     private final Instant createdAt;
 
     private FileSharing(
             final FileSharingID id,
-            final MemberID sharedTo,
-            final MemberID sharedBy,
+            final UserID sharedTo,
+            final UserID sharedBy,
             final FolderID virtualFolder,
             final Instant createdAt) {
         super(id);
@@ -29,8 +29,8 @@ public class FileSharing extends Entity<FileSharingID> {
 
     public static FileSharing with(
             final FileSharingID id,
-            final MemberID sharedTo,
-            final MemberID sharedBy,
+            final UserID sharedTo,
+            final UserID sharedBy,
             final FolderID virtualFolder,
             final Instant createdAt) {
         return new FileSharing(
@@ -42,8 +42,8 @@ public class FileSharing extends Entity<FileSharingID> {
     }
 
     public static FileSharing create(
-            final MemberID sharedTo,
-            final MemberID sharedBy,
+            final UserID sharedTo,
+            final UserID sharedBy,
             final FolderID virtualFolder) {
         final Instant now = Instant.now();
         return new FileSharing(
@@ -58,11 +58,11 @@ public class FileSharing extends Entity<FileSharingID> {
     public void validate(final ValidationHandler handler) {
     }
 
-    public MemberID getSharedTo() {
+    public UserID getSharedTo() {
         return sharedTo;
     }
 
-    public MemberID getSharedBy() {
+    public UserID getSharedBy() {
         return sharedBy;
     }
 

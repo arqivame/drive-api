@@ -1,4 +1,4 @@
-package com.arqivame.drive.domain.member;
+package com.arqivame.drive.domain.user;
 
 import static java.util.Objects.isNull;
 

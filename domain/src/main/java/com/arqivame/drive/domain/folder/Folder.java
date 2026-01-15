@@ -5,12 +5,12 @@ import java.util.Optional;
 import com.arqivame.drive.domain.AggregateRoot;
 import com.arqivame.drive.domain.event.Event;
 import com.arqivame.drive.domain.event.EventSource;
-import com.arqivame.drive.domain.member.MemberID;
+import com.arqivame.drive.domain.user.UserID;
 import com.arqivame.drive.domain.validation.ValidationHandler;
 
 public class Folder extends AggregateRoot<FolderID> implements EventSource {
 
-    private MemberID owner;
+    private UserID owner;
 
     private Folder(FolderID id) {
         super(id);
@@ -28,7 +28,7 @@ public class Folder extends AggregateRoot<FolderID> implements EventSource {
         throw new UnsupportedOperationException("Unimplemented method 'nextEvent'");
     }
 
-    public MemberID getOwner() {
+    public UserID getOwner() {
         return owner;
     }
 

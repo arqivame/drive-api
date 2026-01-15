@@ -11,7 +11,7 @@ import com.arqivame.drive.domain.file.FileName;
 import com.arqivame.drive.domain.file.gateway.command.FileCommandGateway;
 import com.arqivame.drive.domain.file.gateway.query.FileQueryGateway;
 import com.arqivame.drive.domain.folder.FolderID;
-import com.arqivame.drive.domain.member.MemberID;
+import com.arqivame.drive.domain.user.UserID;
 
 @Component
 public class DefaultFileGateway implements FileQueryGateway, FileCommandGateway {
@@ -47,7 +47,7 @@ public class DefaultFileGateway implements FileQueryGateway, FileCommandGateway 
     }
 
     @Override
-    public Long totalBytesUsedBy(MemberID owner) {
+    public Long totalBytesUsedBy(UserID owner) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'totalBytesUsedBy'");
     }
