@@ -20,7 +20,7 @@ public class Resource<I extends Identifier<?>> implements ValueObject {
     private final Resource.Type type;
     private final UserID owner;
 
-    private Resource(
+    public Resource(
             final I id,
             final Type type,
             final UserID owner) {

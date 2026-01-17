@@ -19,4 +19,8 @@ public enum AccessPermission {
         return this.level >= maximum.level;
     }
 
+    public static AccessPermission mostPrivileged() {
+        return MANAGE;
+    }
+
 }

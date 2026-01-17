@@ -13,9 +13,11 @@ public interface FileQueryGateway {
 
     Optional<File> findById(FileID id);
 
+    Optional<File> findVisibleById(FileID id, UserID actor);
+
     Boolean existsFileWithNameInFolder(FileName name, FolderID folderId);
 
-    List<File> listFilesInFolder(FolderID folderId);
+    List<File> findAllInFolder(FolderID folderId);
 
     Long totalBytesUsedBy(UserID owner);
 

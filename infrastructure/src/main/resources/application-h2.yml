@@ -7,7 +7,7 @@ spring:
   h2:
     console:
       enabled: ${h2.console.enabled}
-      path: ${h2.console.path}
+      # path: ${h2.console.path}
   jpa:
     open-in-view: false
     hibernate:

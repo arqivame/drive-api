@@ -11,8 +11,17 @@ public class User extends AggregateRoot<UserID> implements EventSource {
 
     private Quota quota;
 
-    private User(UserID id) {
+    private User(
+            final UserID id,
+            final Quota quota) {
         super(id);
+        this.quota = quota;
+    }
+
+    public static User with(
+            final UserID id,
+            final Quota quota) {
+        return new User(id, quota);
     }
 
     @Override

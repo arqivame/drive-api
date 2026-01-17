@@ -6,4 +6,6 @@ public interface UserGateway {
 
     Optional<User> findById(UserID id);
 
+    Boolean existsById(UserID id);
+
 }

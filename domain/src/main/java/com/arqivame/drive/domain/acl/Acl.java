@@ -1,5 +1,6 @@
 package com.arqivame.drive.domain.acl;
 
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
 import java.time.Instant;
@@ -12,8 +13,11 @@ import java.util.stream.Stream;
 import com.arqivame.drive.domain.AggregateRoot;
 import com.arqivame.drive.domain.event.Event;
 import com.arqivame.drive.domain.event.EventSource;
+import com.arqivame.drive.domain.exception.ValidationException;
 import com.arqivame.drive.domain.user.UserID;
+import com.arqivame.drive.domain.validation.ValidationError;
 import com.arqivame.drive.domain.validation.ValidationHandler;
+import com.arqivame.drive.domain.validation.handler.Notification;
 
 public class Acl extends AggregateRoot<AclID> implements EventSource {
 
@@ -39,10 +43,36 @@ public class Acl extends AggregateRoot<AclID> implements EventSource {
         this.updatedAt = updatedAt;
     }
 
+    public static Acl with(
+            final AclID id,
+            final Resource<?> resource,
+            final Set<Entry> directEntries,
+            final Set<Entry> inheritedEntries,
+            final Instant createdAt,
+            final Instant updatedAt) {
+        return new Acl(id, resource, directEntries, inheritedEntries, createdAt, updatedAt);
+    }
+
     @Override
     public void validate(final ValidationHandler handler) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'validate'");
+    }
+
+    public static Acl create(final Resource<?> resource, final UserID owner) {
+
+        Instant now = Instant.now();
+
+        final Acl newAcl = new Acl(
+                AclID.unique(),
+                resource,
+                null,
+                null,
+                now,
+                now)
+                .grantTotal(owner);
+
+        return newAcl;
     }
 
     public Acl deriveFor(final Resource<?> resource) {
@@ -81,6 +111,35 @@ public class Acl extends AggregateRoot<AclID> implements EventSource {
                 .collect(Collectors.toSet())
                 .stream()
                 .collect(Collectors.toSet());
+    }
+
+    private Acl applyEntry(
+            final UserID grantee,
+            final AccessPermission permission) {
+
+        final Notification notification = Notification.create();
+
+        if (isNull(grantee))
+            notification.append(ValidationError.with("'grantee' should not be null"));
+        if (isNull(permission))
+            notification.append(ValidationError.with("'permission' should not be null"));
+
+        if (notification.hasErrors())
+            throw ValidationException.with("Could not apply entry", notification);
+
+        final Entry entry = Entry.create(grantee, permission);
+
+        if (this.directEntries.stream().anyMatch(e -> e.isEquivalentTo(entry)))
+            return this;
+
+        this.directEntries.add(entry);
+
+        return this;
+
+    }
+
+    private Acl grantTotal(final UserID grantee) {
+        return this.applyEntry(grantee, AccessPermission.mostPrivileged());
     }
 
     @Override

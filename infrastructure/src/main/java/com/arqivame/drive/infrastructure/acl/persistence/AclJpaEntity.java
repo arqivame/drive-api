@@ -1,0 +1,146 @@
+package com.arqivame.drive.infrastructure.acl.persistence;
+
+import java.time.Instant;
+import java.util.Set;
+import java.util.UUID;
+
+import com.arqivame.drive.domain.Identifier;
+import com.arqivame.drive.domain.acl.Acl;
+import com.arqivame.drive.domain.acl.AclID;
+import com.arqivame.drive.domain.acl.Entry;
+import com.arqivame.drive.domain.acl.Resource;
+import com.arqivame.drive.domain.acl.Resource.Type;
+import com.arqivame.drive.domain.file.FileID;
+import com.arqivame.drive.domain.folder.FolderID;
+import com.arqivame.drive.domain.user.UserID;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
+@Entity(name = "Acl")
+@Table(name = "acls")
+public class AclJpaEntity {
+
+    @Id
+    private UUID id;
+
+    @Column(name = "resource_id", nullable = false)
+    private String resourceId;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "resource_type", nullable = false)
+    private Resource.Type resourceType;
+
+    @Column(name = "resource_owner", nullable = false)
+    private UUID resourceOwner;
+
+    @Column(name = "created_at", nullable = false)
+    private Instant createdAt;
+
+    @Column(name = "updated_at", nullable = false)
+    private Instant updatedAt;
+
+    private AclJpaEntity(
+            final UUID id,
+            final String resourceId,
+            final Type resourceType,
+            final UUID resourceOwner,
+            final Instant createdAt,
+            final Instant updatedAt) {
+        this.id = id;
+        this.resourceId = resourceId;
+        this.resourceType = resourceType;
+        this.resourceOwner = resourceOwner;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+    }
+
+    public AclJpaEntity() {
+    }
+
+    public static AclJpaEntity fromDomain(final Acl acl) {
+
+        return new AclJpaEntity(
+                acl.getId().getValue(),
+                acl.getResource().getId().getStringValue(),
+                acl.getResource().getType(),
+                acl.getResource().getOwner().getValue(),
+                acl.getCreatedAt(),
+                acl.getUpdatedAt());
+
+    }
+
+    public Acl toDomain(final Set<Entry> directEntries, final Set<Entry> inheritedEntries) {
+
+        final Resource<?> resource = switch (this.resourceType) {
+            case FILE -> toResource(FileID.of(UUID.fromString(this.resourceId)));
+            case FOLDER -> toResource(FolderID.of(UUID.fromString(this.resourceId)));
+            default -> throw new IllegalStateException("Unexpected value: " + this.resourceId);
+        };
+
+        return Acl.with(
+                AclID.of(this.id),
+                resource,
+                directEntries,
+                inheritedEntries,
+                this.createdAt,
+                this.updatedAt);
+    }
+
+    private <I extends Identifier<?>> Resource<I> toResource(I identifier) {
+        return new Resource<>(identifier, this.resourceType, UserID.of(this.resourceOwner));
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public String getResourceId() {
+        return resourceId;
+    }
+
+    public void setResourceId(String resourceId) {
+        this.resourceId = resourceId;
+    }
+
+    public Resource.Type getResourceType() {
+        return resourceType;
+    }
+
+    public void setResourceType(Resource.Type resourceType) {
+        this.resourceType = resourceType;
+    }
+
+    public UUID getResourceOwner() {
+        return resourceOwner;
+    }
+
+    public void setResourceOwner(UUID resourceOwner) {
+        this.resourceOwner = resourceOwner;
+    }
+
+    public Instant getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Instant createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Instant getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Instant updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+}
