@@ -16,21 +16,21 @@ import com.arqivame.drive.domain.file.FileID;
 import com.arqivame.drive.domain.file.gateway.command.FileCommandGateway;
 import com.arqivame.drive.domain.file.gateway.query.FileQueryGateway;
 import com.arqivame.drive.domain.user.User;
-import com.arqivame.drive.domain.user.UserGateway;
 import com.arqivame.drive.domain.user.UserID;
+import com.arqivame.drive.domain.user.gateway.query.UserQueryGateway;
 
 public class DefaultAuthorizeFileUploadUseCase extends AuthorizeFileUploadUseCase {
 
     private final EventDispatcher eventDispatcher;
 
-    private final UserGateway userGateway;
+    private final UserQueryGateway userGateway;
     private final FileQueryGateway fileQueryGateway;
     private final FileCommandGateway fileCommandGateway;
     private final AclGateway aclGateway;
 
     public DefaultAuthorizeFileUploadUseCase(
             final EventDispatcher eventDispatcher,
-            final UserGateway userGateway,
+            final UserQueryGateway userGateway,
             final FileQueryGateway fileQueryGateway,
             final FileCommandGateway fileCommandGateway,
             final AclGateway aclGateway) {

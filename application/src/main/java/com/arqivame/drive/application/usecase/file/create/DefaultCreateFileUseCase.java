@@ -20,8 +20,8 @@ import com.arqivame.drive.domain.folder.Folder;
 import com.arqivame.drive.domain.folder.FolderID;
 import com.arqivame.drive.domain.folder.gateway.query.FolderQueryGateway;
 import com.arqivame.drive.domain.user.User;
-import com.arqivame.drive.domain.user.UserGateway;
 import com.arqivame.drive.domain.user.UserID;
+import com.arqivame.drive.domain.user.gateway.query.UserQueryGateway;
 import com.arqivame.drive.domain.validation.ValidationError;
 import com.arqivame.drive.domain.validation.handler.Notification;
 
@@ -29,7 +29,7 @@ public class DefaultCreateFileUseCase extends CreateFileUseCase {
 
     private final EventDispatcher eventDispatcher;
 
-    private final UserGateway userGateway;
+    private final UserQueryGateway userQueryGateway;
     private final FolderQueryGateway folderQueryGateway;
     private final AclGateway aclGateway;
     private final FileQueryGateway fileQueryGateway;
@@ -37,13 +37,13 @@ public class DefaultCreateFileUseCase extends CreateFileUseCase {
 
     public DefaultCreateFileUseCase(
             final EventDispatcher eventDispatcher,
-            final UserGateway userGateway,
+            final UserQueryGateway userQueryGateway,
             final FolderQueryGateway folderQueryGateway,
             final AclGateway aclGateway,
             final FileQueryGateway fileQueryGateway,
             final FileCommandGateway fileCommandGateway) {
         this.eventDispatcher = requireNonNull(eventDispatcher);
-        this.userGateway = requireNonNull(userGateway);
+        this.userQueryGateway = requireNonNull(userQueryGateway);
         this.folderQueryGateway = requireNonNull(folderQueryGateway);
         this.aclGateway = requireNonNull(aclGateway);
         this.fileQueryGateway = requireNonNull(fileQueryGateway);
@@ -58,7 +58,7 @@ public class DefaultCreateFileUseCase extends CreateFileUseCase {
         final FileName name = FileName.of(input.name());
         final Content content = Content.of(input.contentType(), input.size());
 
-        userGateway
+        userQueryGateway
                 .findById(creatorId)
                 .orElseThrow(() -> NotFoundException.create(User.class, creatorId));
 
@@ -77,7 +77,7 @@ public class DefaultCreateFileUseCase extends CreateFileUseCase {
         if (!folderPermission.isAtMost(AccessPermission.WRITE))
             throw NotAllowedException.with("You don't have permission to create files in this folder.");
 
-        final User owner = userGateway
+        final User owner = userQueryGateway
                 .findById(folder.getOwner())
                 .orElseThrow(() -> NotFoundException.create(User.class, folder.getOwner()));
 

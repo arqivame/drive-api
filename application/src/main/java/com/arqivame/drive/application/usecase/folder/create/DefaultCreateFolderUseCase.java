@@ -6,20 +6,20 @@ import com.arqivame.drive.domain.folder.Folder;
 import com.arqivame.drive.domain.folder.FolderID;
 import com.arqivame.drive.domain.folder.FolderName;
 import com.arqivame.drive.domain.user.User;
-import com.arqivame.drive.domain.user.UserGateway;
 import com.arqivame.drive.domain.user.UserID;
+import com.arqivame.drive.domain.user.gateway.query.UserQueryGateway;
 
 public class DefaultCreateFolderUseCase extends CreateFolderUseCase {
 
     private final FolderProvisioningService folderProvisioningService;
 
-    private final UserGateway userGateway;
+    private final UserQueryGateway userQueryGateway;
 
     public DefaultCreateFolderUseCase(
             final FolderProvisioningService folderProvisioningService,
-            final UserGateway userGateway) {
+            final UserQueryGateway userQueryGateway) {
         this.folderProvisioningService = folderProvisioningService;
-        this.userGateway = userGateway;
+        this.userQueryGateway = userQueryGateway;
     }
 
     @Override
@@ -29,7 +29,7 @@ public class DefaultCreateFolderUseCase extends CreateFolderUseCase {
         final FolderID parentId = FolderID.of(input.parentId());
         final FolderName name = FolderName.of(input.name());
 
-        if (!userGateway.existsById(creatorId))
+        if (!userQueryGateway.existsById(creatorId))
             throw NotFoundException.create(User.class, creatorId);
 
         final Folder folder = folderProvisioningService.folder(parentId, creatorId, name);

@@ -12,13 +12,13 @@ import com.arqivame.drive.domain.event.EventDispatcher;
 import com.arqivame.drive.domain.file.gateway.command.FileCommandGateway;
 import com.arqivame.drive.domain.file.gateway.query.FileQueryGateway;
 import com.arqivame.drive.domain.folder.gateway.query.FolderQueryGateway;
-import com.arqivame.drive.domain.user.UserGateway;
+import com.arqivame.drive.domain.user.gateway.query.UserQueryGateway;
 
 @Configuration
 public class FileUseCaseConfig {
 
     private final EventDispatcher eventDispatcher;
-    private final UserGateway userGateway;
+    private final UserQueryGateway userGateway;
     private final FolderQueryGateway folderQueryGateway;
     private final AclGateway aclGateway;
     private final FileQueryGateway fileQueryGateway;
@@ -26,7 +26,7 @@ public class FileUseCaseConfig {
 
     public FileUseCaseConfig(
             final EventDispatcher eventDispatcher,
-            final UserGateway userGateway,
+            final UserQueryGateway userGateway,
             final FolderQueryGateway folderQueryGateway,
             final AclGateway aclGateway,
             final FileQueryGateway fileQueryGateway,
