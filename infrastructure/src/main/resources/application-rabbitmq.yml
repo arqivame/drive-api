@@ -1,0 +1,60 @@
+spring:
+  cloud:
+    stream:
+      binders:
+        private-binder:
+          type: rabbit
+          environment:
+            spring:
+              rabbitmq:
+                virtual-host: drive
+                host: ${rabbitmq.host}
+                port: ${rabbitmq.port}
+                username: ${rabbitmq.username}
+                password: ${rabbitmq.password}
+        public-binder:
+          type: rabbit
+          environment:
+            spring:
+              rabbitmq:
+                virtual-host: public
+                host: ${rabbitmq.host}
+                port: ${rabbitmq.port}
+                username: ${rabbitmq.username}
+                password: ${rabbitmq.password}
+      rabbit:
+        bindings:
+          # Private Outgoing RabbitMQ bindings
+          # ---------------------------------------
+          # Private Incoming RabbitMQ bindings
+          # ---------------------------------------
+          # Public Outgoing RabbitMQ bindings
+          ## User Created Event Integration
+          userCreatedIntegrationEventV1Error-out-0:
+            producer:
+              exchangeType: topic
+              destination: drive.exchange.error
+              routingKeyExpression: "'user.created.v1'"
+              queueNameGroupOnly: true
+          # ---------------------------------------
+          # Public Incoming RabbitMQ bindings
+          ## User Created Event Integration
+          userCreatedIntegrationEventV1-in-0:
+            consumer:
+              exchangeType: topic
+              bindingRoutingKey: user.created.v1
+              queueNameGroupOnly: true
+              autoBindDlq: true
+              deadLetterExchange: drive.exchange.wait
+              deadLetterQueueName: drive.user.created.v1.queue.wait
+              dlqDeadLetterExchange: drive.exchange
+              dlqDeadLetterRoutingKey: user.created.v1
+              republishToDlq: false
+              dlqTtl: 5000
+          # ---------------------------------------
+
+rabbitmq:
+  host: ${RABBITMQ_HOST:localhost}
+  port: ${RABBITMQ_PORT:5672}
+  username: ${RABBITMQ_USERNAME:rabbitmq}
+  password: ${RABBITMQ_PASSWORD:rabbitmq}

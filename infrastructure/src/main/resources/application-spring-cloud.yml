@@ -1,0 +1,33 @@
+spring:
+  cloud:
+    function:
+      definition: userCreatedIntegrationConsumerV1
+    stream:
+      function:
+        bindings:
+          userCreatedIntegrationConsumerV1-in-0: userCreatedIntegrationEventV1-in-0
+      default:
+        content-type: application/json
+      default-binder: private-binder
+      bindings:
+        # Private Outgoing bindings
+        # ---------------------------------------
+        # Private Incoming bindings
+        # ---------------------------------------
+        # Public Outgoing bindings
+        userCreatedIntegrationEventV1Error-out-0:
+          binder: public-binder
+          destination: drive.exchange.error
+          producer:
+            requiredGroups: drive.user.created.v1.queue.error
+        # ---------------------------------------
+        # Public Incoming bindings
+        ## User Created Event Integration
+        userCreatedIntegrationEventV1-in-0:
+          binder: public-binder
+          destination: drive.exchange
+          group: drive.user.created.v1.queue
+          consumer:
+            max-attempts: 1
+            concurrency: ${application.messaging.consumer.user-created-event.concurrency}
+        # ---------------------------------------

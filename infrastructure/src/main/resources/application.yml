@@ -5,6 +5,7 @@ spring:
     active:
       - spring-cloud
       - ${application.vendor.database}
+      - ${application.vendor.messaging}
 
 application:
   name: drive-api
@@ -13,3 +14,9 @@ application:
     port: ${DRIVE_SERVER_PORT:8080}
   vendor:
     database: ${DRIVE_VENDOR_DATABASE:postgres} # h2 | postgres
+    messaging: ${DRIVE_VENDOR_MESSAGING:rabbitmq} # rabbitmq
+  messaging:
+    consumer:
+      user-created-event:
+        concurrency: ${DRIVE_MESSAGING_CONSUMER_USER_CREATED_EVENT_CONCURRENCY:1}
+        max-attempts: ${DRIVE_MESSAGING_CONSUMER_USER_CREATED_EVENT_MAX_ATTEMPTS:5}
